@@ -25,6 +25,8 @@ def build_context(settings: Settings) -> tuple[ToolContext, VikunjaClient]:
         settings.vikunja_base_url,
         settings.vikunja_token,
         verify_ssl=settings.vikunja_verify_ssl,
+        max_page_size=settings.vikunja_max_page_size,
+        max_fetch_tasks=settings.vikunja_max_fetch_tasks,
     )
     db = LocalDB(settings.mcp_sqlite_path)
     sync_engine = SyncEngine(

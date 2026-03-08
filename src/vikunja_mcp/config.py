@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     vikunja_token: str = Field(alias="VIKUNJA_TOKEN")
     vikunja_default_project_id: int = Field(alias="VIKUNJA_DEFAULT_PROJECT_ID")
     vikunja_verify_ssl: bool = Field(default=True, alias="VIKUNJA_VERIFY_SSL")
+    vikunja_max_page_size: int = Field(default=100, alias="VIKUNJA_MAX_PAGE_SIZE")
+    vikunja_max_fetch_tasks: int = Field(default=500, alias="VIKUNJA_MAX_FETCH_TASKS")
 
     mcp_log_level: str = Field(default="INFO", alias="MCP_LOG_LEVEL")
     mcp_sqlite_path: Path = Field(

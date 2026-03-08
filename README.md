@@ -34,6 +34,10 @@ cp .env.example .env
 
 Edit `.env` and set your token/project.
 
+Important optional env tuning:
+- `VIKUNJA_MAX_PAGE_SIZE` (default `100`)
+- `VIKUNJA_MAX_FETCH_TASKS` (default `500`)
+
 ## Commands
 
 ```bash
@@ -64,7 +68,22 @@ uv run python scripts/report_task_result.py tasks/TASK-123.yaml --result success
 
 # Move locally completed tasks to archive
 uv run python scripts/close_completed_local_tasks.py
+
+# Import Taskwarrior-style JSON into Vikunja
+uv run python scripts/import_taskwarrior_json.py ./taskwarrior-export.json --project-id 44
 ```
+
+## Ecosystem references (as of 2026-03-08)
+
+- [Vikunja official integrations](https://vikunja.io/docs/integrations/)
+- [Vikunja n8n integration docs](https://vikunja.io/docs/integrations/n8n/)
+- [Vja CLI (GitLab)](https://gitlab.com/go-vikunja/vja)
+- [tw2vikunja migration tool](https://github.com/JohannSteffens/tw2vikunja)
+- [Cria terminal UI for Vikunja](https://codeberg.org/alpha_v/cria)
+- [Home Assistant Vikunja integration (community)](https://github.com/ruifern/homeassistant-vikunja)
+- [Community Vikunja MCP server reference](https://github.com/democratize-technology/vikunja-mcp-server)
+
+Detailed notes and adoption decisions are documented in `docs/ecosystem-implementations.md`.
 
 ## Task state model
 

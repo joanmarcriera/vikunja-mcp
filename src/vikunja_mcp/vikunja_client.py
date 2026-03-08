@@ -20,8 +20,18 @@ logger = logging.getLogger(__name__)
 
 
 class VikunjaClient:
-    def __init__(self, base_url: str, token: str, *, verify_ssl: bool = True):
+    def __init__(
+        self,
+        base_url: str,
+        token: str,
+        *,
+        verify_ssl: bool = True,
+        max_page_size: int = 100,
+        max_fetch_tasks: int = 500,
+    ):
         self.base_url = base_url.rstrip("/")
+        self.max_page_size = max(1, max_page_size)
+        self.max_fetch_tasks = max(1, max_fetch_tasks)
         self.client = httpx.Client(
             base_url=self.base_url,
             timeout=20.0,
@@ -79,20 +89,41 @@ class VikunjaClient:
         filter_expression: str | None = None,
         limit: int = 50,
     ) -> list[dict[str, Any]]:
-        params: dict[str, Any] = {"per_page": max(1, min(limit, 500)), "page": 1}
-        if project_id is not None:
-            params["project_id"] = project_id
-        if filter_expression:
-            params["filter"] = filter_expression
+        max_items = max(1, min(limit, self.max_fetch_tasks))
+        per_page = max(1, min(max_items, self.max_page_size))
+        page = 1
+        items: list[dict[str, Any]] = []
+        endpoint = "/tasks/all"
 
-        try:
-            data = self._request("GET", "/tasks/all", params=params)
-        except VikunjaNotFoundError:
-            # Compatibility path for older/newer deployments.
-            data = self._request("GET", "/tasks", params=params)
+        while len(items) < max_items:
+            params: dict[str, Any] = {"per_page": per_page, "page": page}
+            if project_id is not None:
+                params["project_id"] = project_id
+            if filter_expression:
+                params["filter"] = filter_expression
 
+            try:
+                data = self._request("GET", endpoint, params=params)
+            except VikunjaNotFoundError:
+                # Compatibility path for older/newer deployments.
+                if endpoint == "/tasks/all":
+                    endpoint = "/tasks"
+                    continue
+                raise
+
+            page_items = self._coerce_task_list(data)
+            items.extend(page_items)
+            if len(page_items) < per_page:
+                break
+            page += 1
+
+        return items[:max_items]
+
+    @staticmethod
+    def _coerce_task_list(data: Any) -> list[dict[str, Any]]:
         if isinstance(data, dict) and "tasks" in data:
-            return list(data["tasks"])
+            raw = data["tasks"]
+            return raw if isinstance(raw, list) else []
         if isinstance(data, list):
             return data
         return []
