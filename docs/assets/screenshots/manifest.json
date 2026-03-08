@@ -1,0 +1,24 @@
+{
+  "base_web_url": "https://familia.riera.co.uk",
+  "project_id": 11,
+  "view_ids": {
+    "list": 41,
+    "gantt": 42,
+    "table": 43,
+    "kanban": 44
+  },
+  "task_ids": {
+    "07": 139,
+    "10": 142
+  },
+  "screenshots": {
+    "01_list_view": "docs/assets/screenshots/01_list_view.png",
+    "02_gantt_view": "docs/assets/screenshots/02_gantt_view.png",
+    "03_table_view": "docs/assets/screenshots/03_table_view.png",
+    "04_kanban_view": "docs/assets/screenshots/04_kanban_view.png",
+    "05_list_filter_dialog": "docs/assets/screenshots/05_list_filter_dialog.png",
+    "06_list_filtered": "docs/assets/screenshots/06_list_filtered.png",
+    "07_task_done_detail": "docs/assets/screenshots/07_task_done_detail.png",
+    "08_task_doing_detail": "docs/assets/screenshots/08_task_doing_detail.png"
+  }
+}

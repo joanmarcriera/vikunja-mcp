@@ -77,6 +77,9 @@ uv run python scripts/close_completed_local_tasks.py
 
 # Import Taskwarrior-style JSON into Vikunja
 uv run python scripts/import_taskwarrior_json.py ./taskwarrior-export.json --project-id 44
+
+# Capture README screenshots from Vikunja UI (Playwright)
+uv run --extra dev python scripts/capture_vikunja_screenshots.py --headless
 ```
 
 ## Ecosystem references (as of 2026-03-08)
