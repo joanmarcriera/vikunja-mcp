@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+.env
+.orchestrator/*.db
+.orchestrator/*.db-*
+outputs/
+*.log
