@@ -1,0 +1,28 @@
+id: TASK-123
+vikunja_task_id: 123
+project_id: 44
+title: Implement auth middleware
+state: in_progress
+priority: 3
+labels:
+  - agent:coder
+  - status:in_progress
+  - repo:main-platform
+assignee: coder.agent
+depends_on:
+  - TASK-122
+source_ref: repo:epic-44:story-123
+repo_path: /workspace/main-platform
+branch_name: task-123-auth-middleware
+objective: Implement auth middleware
+description: |
+  Implement middleware for token validation.
+acceptance_criteria:
+  - Requests without token are rejected
+  - Valid tokens pass through
+constraints:
+  - Keep config backward compatible
+artifacts:
+  - outputs/task-123/summary.md
+  - outputs/task-123/test-results.txt
+updated_at: 2026-03-08T10:00:00Z
