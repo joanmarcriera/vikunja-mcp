@@ -82,6 +82,34 @@ uv run python scripts/import_taskwarrior_json.py ./taskwarrior-export.json --pro
 uv run --extra dev python scripts/capture_vikunja_screenshots.py --headless
 ```
 
+## UI walkthrough
+
+### List view
+
+![List view](docs/assets/screenshots/01_list_view.png)
+
+### Gantt view
+
+![Gantt view](docs/assets/screenshots/02_gantt_view.png)
+
+### Table view
+
+![Table view](docs/assets/screenshots/03_table_view.png)
+
+### Kanban view
+
+![Kanban view](docs/assets/screenshots/04_kanban_view.png)
+
+### Filters
+
+![List filter dialog](docs/assets/screenshots/05_list_filter_dialog.png)
+![List filtered result](docs/assets/screenshots/06_list_filtered.png)
+
+### Task details
+
+![Done task detail](docs/assets/screenshots/07_task_done_detail.png)
+![Doing task detail](docs/assets/screenshots/08_task_doing_detail.png)
+
 ## Ecosystem references (as of 2026-03-08)
 
 - [Vikunja official integrations](https://vikunja.io/docs/integrations/)
