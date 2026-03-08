@@ -7,7 +7,11 @@ from vikunja_mcp.schemas.tool_io import (
     ClaimNextTaskInput,
     CreateTaskInput,
     GetTaskInput,
+    GetViewTasksInput,
+    ListProjectViewsInput,
     ListTasksInput,
+    MoveTaskPositionInput,
+    MoveTaskToBucketInput,
     SyncFsTasksInput,
     TransitionTaskInput,
     UpdateTaskInput,
@@ -17,7 +21,11 @@ from vikunja_mcp.tools import (
     claim_next_task,
     create_task,
     get_task,
+    get_view_tasks,
+    list_project_views,
     list_tasks,
+    move_task_position,
+    move_task_to_bucket,
     sync_fs_tasks,
     transition_task,
     update_task,
@@ -44,6 +52,27 @@ def create_mcp_server(ctx: ToolContext):
     )
     def vikunja_list_tasks(input_data: ListTasksInput) -> dict:
         return list_tasks(ctx, input_data)
+
+    @mcp.tool(
+        name="vikunja_list_project_views",
+        description=(
+            "List all views in a project (list/gantt/table/kanban). Read-only operation. "
+            "Use before view-specific operations."
+        ),
+    )
+    def vikunja_list_project_views(input_data: ListProjectViewsInput) -> dict:
+        return list_project_views(ctx, input_data)
+
+    @mcp.tool(
+        name="vikunja_get_view_tasks",
+        description=(
+            "Fetch tasks for a specific project view. "
+            "For kanban views it returns buckets with tasks; "
+            "for table/gantt/list it returns a task list."
+        ),
+    )
+    def vikunja_get_view_tasks(input_data: GetViewTasksInput) -> dict:
+        return get_view_tasks(ctx, input_data)
 
     @mcp.tool(
         name="vikunja_get_task",
@@ -104,6 +133,26 @@ def create_mcp_server(ctx: ToolContext):
     )
     def vikunja_add_execution_note(input_data: AddExecutionNoteInput) -> dict:
         return add_execution_note(ctx, input_data)
+
+    @mcp.tool(
+        name="vikunja_move_task_to_bucket",
+        description=(
+            "Move a task to a kanban bucket in a specific project view. "
+            "Mutates task bucket mapping."
+        ),
+    )
+    def vikunja_move_task_to_bucket(input_data: MoveTaskToBucketInput) -> dict:
+        return move_task_to_bucket(ctx, input_data)
+
+    @mcp.tool(
+        name="vikunja_move_task_position",
+        description=(
+            "Update a task position for a specific project view (table/kanban ordering). "
+            "Mutates task ordering."
+        ),
+    )
+    def vikunja_move_task_position(input_data: MoveTaskPositionInput) -> dict:
+        return move_task_position(ctx, input_data)
 
     @mcp.tool(
         name="vikunja_sync_fs_tasks",

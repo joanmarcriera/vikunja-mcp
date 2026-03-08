@@ -4,7 +4,7 @@ Production-oriented MCP server and local orchestration toolkit for using Vikunja
 
 ## What this provides
 
-- A Python MCP server exposing exactly 8 tools:
+- A Python MCP server exposing core workflow tools:
   1. `vikunja_list_tasks`
   2. `vikunja_get_task`
   3. `vikunja_create_task`
@@ -13,6 +13,12 @@ Production-oriented MCP server and local orchestration toolkit for using Vikunja
   6. `vikunja_claim_next_task`
   7. `vikunja_add_execution_note`
   8. `vikunja_sync_fs_tasks`
+- Additional view-aware tools for table/gantt/kanban:
+  1. `vikunja_list_project_views`
+  2. `vikunja_get_view_tasks`
+  3. `vikunja_move_task_to_bucket`
+  4. `vikunja_move_task_position`
+  5. `vikunja_update_task` with `start_date`/`end_date` for gantt timeline moves
 - State machine guardrails using `status:*` labels.
 - SQLite-backed idempotency, task mapping, sync metadata, and claim locks.
 - Local task manifest sync (`tasks/*.yaml`) and artifact path reporting (`outputs/`).
@@ -84,6 +90,8 @@ uv run python scripts/import_taskwarrior_json.py ./taskwarrior-export.json --pro
 - [Community Vikunja MCP server reference](https://github.com/democratize-technology/vikunja-mcp-server)
 
 Detailed notes and adoption decisions are documented in `docs/ecosystem-implementations.md`.
+
+View movement examples are in `docs/view-operations.md`.
 
 ## Task state model
 

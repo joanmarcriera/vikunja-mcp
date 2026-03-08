@@ -38,6 +38,8 @@ class UpdateTaskInput(BaseModel):
     description: str | None = None
     priority: int | None = None
     due_date: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
     labels_add: list[str] = Field(default_factory=list)
     labels_remove: list[str] = Field(default_factory=list)
     assignees_add: list[str] = Field(default_factory=list)
@@ -76,3 +78,31 @@ class SyncFsTasksInput(BaseModel):
     archive_dir: str | None = None
     project_id: int
     dry_run: bool = False
+
+
+class ListProjectViewsInput(BaseModel):
+    project_id: int | None = None
+    view_kind: str | None = None
+
+
+class GetViewTasksInput(BaseModel):
+    project_id: int | None = None
+    view_id: int | None = None
+    view_kind: str | None = None
+    filter: str | None = None
+    expand: list[str] = Field(default_factory=list)
+    limit: int = 50
+
+
+class MoveTaskToBucketInput(BaseModel):
+    project_id: int | None = None
+    view_id: int | None = None
+    task_id: int
+    bucket_id: int | None = None
+    bucket_title: str | None = None
+
+
+class MoveTaskPositionInput(BaseModel):
+    task_id: int
+    project_view_id: int
+    position: float

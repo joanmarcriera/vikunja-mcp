@@ -19,6 +19,10 @@ def run(ctx: ToolContext, payload: UpdateTaskInput) -> dict:
         patch["priority"] = payload.priority
     if payload.due_date is not None:
         patch["due_date"] = payload.due_date
+    if payload.start_date is not None:
+        patch["start_date"] = payload.start_date
+    if payload.end_date is not None:
+        patch["end_date"] = payload.end_date
 
     if patch:
         ctx.client.update_task(payload.task_id, patch)

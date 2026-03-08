@@ -134,6 +134,88 @@ class VikunjaClient:
             return data
         return []
 
+    def list_project_views(self, project_id: int) -> list[dict[str, Any]]:
+        data = self._request("GET", f"/projects/{project_id}/views")
+        return data if isinstance(data, list) else []
+
+    def get_project_view(self, project_id: int, view_id: int) -> dict[str, Any]:
+        return self._request("GET", f"/projects/{project_id}/views/{view_id}")
+
+    def list_view_buckets(self, project_id: int, view_id: int) -> list[dict[str, Any]]:
+        data = self._request("GET", f"/projects/{project_id}/views/{view_id}/buckets")
+        return data if isinstance(data, list) else []
+
+    def list_view_tasks(
+        self,
+        *,
+        project_id: int,
+        view_id: int,
+        limit: int = 50,
+        filter_expression: str | None = None,
+        expand: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
+        max_items = max(1, min(limit, self.max_fetch_tasks))
+        per_page = max(1, min(max_items, self.max_page_size))
+
+        page = 1
+        items: list[dict[str, Any]] = []
+        while len(items) < max_items:
+            params: dict[str, Any] = {"per_page": per_page, "page": page}
+            if filter_expression:
+                params["filter"] = filter_expression
+            if expand:
+                params["expand"] = expand
+
+            data = self._request(
+                "GET",
+                f"/projects/{project_id}/views/{view_id}/tasks",
+                params=params,
+            )
+            page_items = self._coerce_task_list(data)
+
+            # Kanban views return bucket objects with `tasks`.
+            # Do not paginate them as plain task lists.
+            if page_items and isinstance(page_items[0], dict) and "tasks" in page_items[0]:
+                return page_items
+
+            items.extend(page_items)
+            if len(page_items) < per_page:
+                break
+            page += 1
+
+        return items[:max_items]
+
+    def move_task_to_bucket(
+        self,
+        *,
+        project_id: int,
+        view_id: int,
+        bucket_id: int,
+        task_id: int,
+    ) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            f"/projects/{project_id}/views/{view_id}/buckets/{bucket_id}/tasks",
+            json={"task_id": task_id},
+        )
+
+    def update_task_position(
+        self,
+        *,
+        task_id: int,
+        project_view_id: int,
+        position: float,
+    ) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            f"/tasks/{task_id}/position",
+            json={
+                "task_id": task_id,
+                "project_view_id": project_view_id,
+                "position": position,
+            },
+        )
+
     def get_task(self, task_id: int) -> dict[str, Any]:
         return self._request("GET", f"/tasks/{task_id}")
 
