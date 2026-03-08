@@ -28,9 +28,10 @@ def run(ctx: ToolContext, payload: UpdateTaskInput) -> dict:
     labels.difference_update(payload.labels_remove)
     ctx.client.set_task_labels(payload.task_id, sorted(labels))
 
-    assignees = set(VikunjaClient.normalize_assignees(task))
-    assignees.update(payload.assignees_add)
-    assignees.difference_update(payload.assignees_remove)
-    ctx.client.set_task_assignees(payload.task_id, sorted(assignees))
+    if payload.assignees_add or payload.assignees_remove:
+        assignees = set(VikunjaClient.normalize_assignees(task))
+        assignees.update(payload.assignees_add)
+        assignees.difference_update(payload.assignees_remove)
+        ctx.client.set_task_assignees(payload.task_id, sorted(assignees))
 
     return {"task_id": payload.task_id, "updated": True}

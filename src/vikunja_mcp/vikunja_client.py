@@ -91,33 +91,39 @@ class VikunjaClient:
     ) -> list[dict[str, Any]]:
         max_items = max(1, min(limit, self.max_fetch_tasks))
         per_page = max(1, min(max_items, self.max_page_size))
-        page = 1
-        items: list[dict[str, Any]] = []
-        endpoint = "/tasks/all"
+        endpoints: list[str] = []
+        if project_id is not None:
+            endpoints.append(f"/projects/{project_id}/tasks")
+        endpoints.extend(["/tasks/all", "/tasks"])
 
-        while len(items) < max_items:
-            params: dict[str, Any] = {"per_page": per_page, "page": page}
-            if project_id is not None:
-                params["project_id"] = project_id
-            if filter_expression:
-                params["filter"] = filter_expression
-
+        last_error: Exception | None = None
+        for endpoint in endpoints:
+            page = 1
+            items: list[dict[str, Any]] = []
             try:
-                data = self._request("GET", endpoint, params=params)
-            except VikunjaNotFoundError:
-                # Compatibility path for older/newer deployments.
-                if endpoint == "/tasks/all":
-                    endpoint = "/tasks"
-                    continue
-                raise
+                while len(items) < max_items:
+                    params: dict[str, Any] = {"per_page": per_page, "page": page}
+                    if endpoint.startswith("/projects/"):
+                        pass
+                    elif project_id is not None:
+                        params["project_id"] = project_id
+                    if filter_expression:
+                        params["filter"] = filter_expression
 
-            page_items = self._coerce_task_list(data)
-            items.extend(page_items)
-            if len(page_items) < per_page:
-                break
-            page += 1
+                    data = self._request("GET", endpoint, params=params)
+                    page_items = self._coerce_task_list(data)
+                    items.extend(page_items)
+                    if len(page_items) < per_page:
+                        break
+                    page += 1
+                return items[:max_items]
+            except (VikunjaNotFoundError, VikunjaValidationError) as exc:
+                last_error = exc
+                continue
 
-        return items[:max_items]
+        if last_error:
+            raise last_error
+        return []
 
     @staticmethod
     def _coerce_task_list(data: Any) -> list[dict[str, Any]]:
@@ -206,7 +212,7 @@ class VikunjaClient:
     @staticmethod
     def normalize_labels(task: dict[str, Any]) -> list[str]:
         labels = []
-        for item in task.get("labels", []):
+        for item in task.get("labels") or []:
             if isinstance(item, str):
                 labels.append(item)
             elif isinstance(item, dict):
@@ -218,7 +224,7 @@ class VikunjaClient:
     @staticmethod
     def normalize_assignees(task: dict[str, Any]) -> list[str]:
         assignees = []
-        for item in task.get("assignees", []):
+        for item in task.get("assignees") or []:
             if isinstance(item, str):
                 assignees.append(item)
             elif isinstance(item, dict):
