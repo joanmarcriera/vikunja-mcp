@@ -1,5 +1,7 @@
 # vikunja-mcp-server
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Production-oriented MCP server and local orchestration toolkit for using Vikunja as an AI task control plane.
 
 ## What this provides
